@@ -61,7 +61,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,30 +71,185 @@ module.exports =
 "use strict";
 
 
-var _express = __webpack_require__(1);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const config = {
+  development: {
+    DB_URL: 'mongodb://localhost/node-mongo-rest-api-dev'
+  },
+  production: {
+    DB_URL: 'mongodb://localhost/node-mongo-rest-api-prod'
+  },
+  test: {
+    DB_URL: 'mongodb://localhost/node-mongo-rest-api-test'
+  }
+};
+
+const getConfig = env => config[env];
+
+const defaultConfig = {
+  PORT: process.env.PORT || 3000
+};
+
+exports.default = Object.assign({}, defaultConfig, getConfig(process.env.NODE_ENV));
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _express = __webpack_require__(2);
 
 var _express2 = _interopRequireDefault(_express);
+
+var _constants = __webpack_require__(0);
+
+var _constants2 = _interopRequireDefault(_constants);
+
+__webpack_require__(3);
+
+var _middlewares = __webpack_require__(5);
+
+var _middlewares2 = _interopRequireDefault(_middlewares);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express2.default)();
 
-const PORT = process.env.PORT || 3000;
+(0, _middlewares2.default)(app);
 
-app.listen(PORT, err => {
+app.get('/', (req, res) => {
+  return res.status(200).json({ hey: 'man' });
+});
+
+app.listen(_constants2.default.PORT, err => {
   if (err) {
     throw err;
   }
 
-  console.log(`server is running on port ${PORT}!!`);
+  console.log(`server is running on port ${_constants2.default.PORT}`);
   console.log(`running environment is ${process.env.NODE_ENV}`);
 });
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = require("express");
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _mongoose = __webpack_require__(4);
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _constants = __webpack_require__(0);
+
+var _constants2 = _interopRequireDefault(_constants);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// remove the warning with promise
+_mongoose2.default.Promise = global.Promise;
+
+try {
+  _mongoose2.default.connect(_constants2.default.DB_URL, {
+    useMongoClient: true
+  });
+} catch (error) {
+  _mongoose2.default.createConnection(_constants2.default.DB_URL, {
+    useMongoClient: true
+  });
+}
+
+_mongoose2.default.connection.once('open', () => {
+  console.log('mongoDB is running');
+}).on('error', error => {
+  throw error;
+});
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("mongoose");
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _morgan = __webpack_require__(6);
+
+var _morgan2 = _interopRequireDefault(_morgan);
+
+var _bodyParser = __webpack_require__(7);
+
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+var _compression = __webpack_require__(8);
+
+var _compression2 = _interopRequireDefault(_compression);
+
+var _helmet = __webpack_require__(9);
+
+var _helmet2 = _interopRequireDefault(_helmet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const isDev = process.env.NODE_ENV === 'development';
+const isProd = process.env.NODE_ENV === 'production';
+
+exports.default = app => {
+  if (isProd) {
+    app.use((0, _compression2.default)());
+    app.use((0, _helmet2.default)());
+  }
+
+  app.use(_bodyParser2.default.json());
+  app.use(_bodyParser2.default.urlencoded({ extended: true }));
+  if (isDev) {
+    app.use((0, _morgan2.default)('dev'));
+  }
+};
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = require("morgan");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("body-parser");
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = require("compression");
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = require("helmet");
 
 /***/ })
 /******/ ]);
