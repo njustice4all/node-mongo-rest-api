@@ -1,0 +1,11 @@
+{
+  "extends": ["airbnb-base/legacy"],
+  "parser": "babel-eslint",
+  "rules": {
+    "comma-dangle": ["error", "always-multiline"],
+    "no-console": 0,
+    "global-require": 0,
+    "func-names": 0,
+    "no-underscore-dangle": 0
+  }
+}
