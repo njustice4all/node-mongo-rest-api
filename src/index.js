@@ -9,6 +9,7 @@ const app = express();
 middlewares(app);
 
 app.get('/', (req, res) => {
+  console.log('test commit');
   return res.status(200).json({ hey: 'man' });
 });
 
