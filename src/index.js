@@ -9,7 +9,7 @@ const app = express();
 middlewares(app);
 
 app.get('/', (req, res) => {
-  console.log('hey man');
+  console.log('test');
   return res.status(200).json({ hey: 'man' });
 });
 
