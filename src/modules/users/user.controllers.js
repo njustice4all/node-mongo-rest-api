@@ -8,3 +8,8 @@ export const signUp = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+export const login = async (req, res, next) => {
+  res.status(200).json(req.user);
+  return next();
+};
