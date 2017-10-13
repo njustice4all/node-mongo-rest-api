@@ -1,6 +1,7 @@
 const config = {
   development: {
     DB_URL: 'mongodb://localhost/node-mongo-rest-api-dev',
+    JWT_SECRET: 'hellojwt',
   },
   production: {
     DB_URL: 'mongodb://localhost/node-mongo-rest-api-prod',
