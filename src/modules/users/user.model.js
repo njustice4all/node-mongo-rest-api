@@ -67,6 +67,7 @@ UserSchema.methods = {
     return jwt.sign(
       {
         _id: this._id,
+        email: this.email,
       },
       constants.JWT_SECRET
     );

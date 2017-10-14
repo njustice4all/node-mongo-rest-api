@@ -7,8 +7,10 @@ import apiRoutes from './modules';
 
 const app = express();
 
+// apply middlewares
 middlewares(app);
 
+// user routes
 apiRoutes(app);
 
 app.get('/', (req, res) => {
