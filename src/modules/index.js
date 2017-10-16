@@ -1,9 +1,7 @@
 import userRoutes from './users/user.routes';
-import { authJwt } from '../services/auth.services';
+import postRoutes from './posts/post.routes';
 
 export default app => {
   app.use('/api/users', userRoutes);
-  app.get('/hello', authJwt, (req, res) => {
-    res.send('if you see this, you have permission');
-  });
+  app.use('/api/posts', postRoutes);
 };
