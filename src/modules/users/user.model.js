@@ -72,19 +72,18 @@ UserSchema.methods = {
     return compareSync(password, this.password);
   },
   _createToken() {
-    return jwt.sign(
-      {
-        _id: this._id,
-        email: this.email,
-      },
-      constants.JWT_SECRET
-    );
+    return jwt.sign({ _id: this._id }, constants.JWT_SECRET);
   },
   // override toJSON
   toJSON() {
     return {
       _id: this._id,
-      email: this.email,
+      userName: this.userName,
+    };
+  },
+  toAuthJSON() {
+    return {
+      _id: this._id,
       userName: this.userName,
       token: `JWT ${this._createToken()}`,
     };
