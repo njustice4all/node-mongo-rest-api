@@ -17,4 +17,6 @@ routes.patch('/:id', authJwt, validate(postValidation.updatePost), postControlle
 
 routes.delete('/:id', authJwt, postController.deletePost);
 
+routes.post('/:id/favorite', authJwt, postController.favoritePost);
+
 export default routes;

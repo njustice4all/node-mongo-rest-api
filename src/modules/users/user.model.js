@@ -6,6 +6,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 
 import { passwordReg } from './user.validations';
 import constants from '../../config/constants';
+import Post from '../posts/post.model';
 
 const UserSchema = new Schema(
   {
@@ -49,6 +50,14 @@ const UserSchema = new Schema(
         message: 'invalid password',
       },
     },
+    favorites: {
+      posts: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Post',
+        },
+      ],
+    },
   },
   { timestamps: true }
 );
@@ -87,6 +96,19 @@ UserSchema.methods = {
       userName: this.userName,
       token: `JWT ${this._createToken()}`,
     };
+  },
+  _favorites: {
+    async posts(postId) {
+      if (this.favorites.posts.indexOf(postId) >= 0) {
+        this.favorites.posts.remove(postId);
+        await Post.decFavoriteCount(postId);
+      } else {
+        this.favorites.posts.push(postId);
+        await Post.incFavoriteCount(postId);
+      }
+
+      return this.save();
+    },
   },
 };
 
