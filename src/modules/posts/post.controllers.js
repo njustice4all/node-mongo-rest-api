@@ -18,8 +18,18 @@ export const getPostById = async (req, res) => {
      * populate 사용하면 유저아이디가 유저 객체로 바뀐다
      * 'user'는 post.model에 키값이 user를 뜻한다.
      */
-    const post = await Post.findById(req.params.id).populate('user');
-    return res.status(HttpStatus.OK).json(post);
+    const promise = await Promise.all([
+      User.findById(req.user._id),
+      Post.findById(req.params.id).populate('user'),
+    ]);
+
+    const favorite = promise[0]._favorites.isPostIsFavorite(req.params.id);
+    const post = promise[1];
+
+    return res.status(HttpStatus.OK).json({
+      ...post.toJSON(),
+      favorite,
+    });
   } catch (error) {
     return res.status(HttpStatus.BAD_REQUEST).json(error);
   }
@@ -30,7 +40,17 @@ export const getPostLists = async (req, res) => {
   const skip = parseInt(req.query.skip, 0);
 
   try {
-    const posts = await Post.list({ limit, skip });
+    const promise = await Promise.all([User.findById(req.user._id), Post.list({ limit, skip })]);
+
+    const posts = promise[1].reduce((arr, post) => {
+      const favorite = promise[0]._favorites.isPostIsFavorite(post._id);
+      arr.push({
+        ...post.toJSON(),
+        favorite,
+      });
+
+      return arr;
+    }, []);
     return res.status(HttpStatus.OK).json(posts);
   } catch (error) {
     return res.status(HttpStatus.BAD_REQUEST).json(error);
